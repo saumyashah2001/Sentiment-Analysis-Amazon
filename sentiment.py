@@ -8,8 +8,10 @@ from langchain_community.document_loaders import WebBaseLoader
 import time
 from dotenv import load_dotenv
 import re
+import nltk
+nltk.download('vader_lexicon')
 
-load_dotenv() 
+load_dotenv()
 
 all_reviews=[]
 
