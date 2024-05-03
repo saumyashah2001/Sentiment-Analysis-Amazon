@@ -138,7 +138,7 @@ def main():
             if product_url:
                 new_url = extract_review_url(product_url)
                 all_reviews = scrape_reviews(new_url)
-                
+                st.write(all_reviews)
                 if all_reviews:
                     average_sentiment, positive_reviews, negative_reviews, average_percent = analyze_review(all_reviews)
                     
