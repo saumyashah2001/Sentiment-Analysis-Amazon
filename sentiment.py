@@ -136,12 +136,10 @@ def main():
         st.subheader("Analyze Amazon Product URL")
 
         product_url = st.text_input("Enter the URL of the product on Amazon:")
-        st.write(product_url)
         
         if st.button("Analyze URL"):
             if product_url:
                 new_url = extract_review_url(product_url)
-                st.write(new_url)
                 all_reviews = scrape_reviews(new_url)
                 # st.write(all_reviews)
 
