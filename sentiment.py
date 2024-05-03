@@ -60,9 +60,11 @@ def extract_review_url(amazon_url):
 def scrape_reviews(url):
     all_reviews = []
     try:
+        st.write(url)
         loader = WebBaseLoader(url)
         soup = loader.scrape()
         reviews = soup.find_all("span", class_="a-size-base review-text review-text-content")
+        st.write(reviews)
         for review in reviews:
             all_reviews.append(review.text.strip())
     
