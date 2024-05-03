@@ -60,11 +60,11 @@ def extract_review_url(amazon_url):
 def scrape_reviews(url):
     all_reviews = []
     try:
-        st.write(url)
+        # st.write(url)
         loader = WebBaseLoader(url)
         soup = loader.scrape()
         reviews = soup.find_all("span", class_="a-size-base review-text review-text-content")
-        st.write(reviews)
+        # st.write(reviews)
         for review in reviews:
             all_reviews.append(review.text.strip())
     
@@ -136,10 +136,12 @@ def main():
         st.subheader("Analyze Amazon Product URL")
 
         product_url = st.text_input("Enter the URL of the product on Amazon:")
+        st.write(product_url)
         
         if st.button("Analyze URL"):
             if product_url:
                 new_url = extract_review_url(product_url)
+                st.write(new_url)
                 all_reviews = scrape_reviews(new_url)
                 # st.write(all_reviews)
 
