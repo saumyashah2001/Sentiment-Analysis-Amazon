@@ -4,3 +4,4 @@ langchain
 python-dotenv
 langchain-openai
 langchain-community
+beautifulsoup4
