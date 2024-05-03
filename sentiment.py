@@ -1,6 +1,7 @@
 import os
 import streamlit as st
 from langchain.chains import create_tagging_chain
+from bs4 import BeautifulSoup
 from langchain_openai import ChatOpenAI
 from nltk.sentiment import SentimentIntensityAnalyzer
 from langchain_community.document_loaders import WebBaseLoader
@@ -36,44 +37,42 @@ def remove_markdown(text):
     text = re.sub(r'(\d+\.\s+)(.*?)\n', r'\2\n', text)
     text = re.sub(r'\*{3,}|-{3,}|_{3,}', '', text)
     return text
-    
+
 def extract_review_url(amazon_url):
     try:
         domain = amazon_url.split('/')[2]
-        if domain == 'www.amazon.com':
+        if domain == 'www.amazon.com' or domain == 'www.amazon.in':
             asin_index = amazon_url.find('/dp/') + 4
             asin = amazon_url[asin_index:asin_index + 10]
             review_url = f"https://{domain}/product-reviews/{asin}/ref=cm_cr_dp_d_show_all_btm?ie=UTF8&reviewerType=all_reviews"
-        elif domain == 'www.amazon.in':
-            asin_index = amazon_url.find('/dp/') + 4
-            asin = amazon_url[asin_index:asin_index + 10]
-            review_url = f"https://{domain}/product-reviews/{asin}/ref=cm_cr_dp_d_show_all_btm?ie=UTF8&reviewerType=all_reviews"
+            print(review_url)
+            return review_url
         else:
-            st.warning("Unsupported Amazon domain. Please provide a URL for Amazon.com or Amazon.in.")
+            print("Unsupported Amazon domain. Please provide a URL for Amazon.com or Amazon.in.")
             return None
-        return review_url
     except Exception as e:
         print(f"Error: {e}")
         return None
 
 def scrape_reviews(url):
-    global all_reviews
-     # Initialize the global variable
-    loader = WebBaseLoader(url)
-    soup = loader.scrape()
+    all_reviews = []
+    try:
+        loader = WebBaseLoader(url)
+        soup = loader.scrape()
+        reviews = soup.find_all("span", class_="a-size-base review-text review-text-content")
+        for review in reviews:
+            all_reviews.append(review.text.strip())
     
-    reviews = soup.find_all("span", class_="a-size-base review-text review-text-content")
-    
-    for review in reviews:
-        all_reviews.append(review.text.strip())
-    
-    next_button = soup.find('li', {'class': 'a-last'})
-    if next_button and next_button.find('a'):
-        next_page_url = 'https://www.amazon.com' + next_button.find('a')['href']
-        time.sleep(3)
-        scrape_reviews(next_page_url)
+        next_button = soup.find('li', {'class': 'a-last'})
+        if next_button and next_button.find('a'):
+            next_page_url = 'https://www.amazon.com' + next_button.find('a')['href']
+            time.sleep(3)
+            all_reviews += scrape_reviews(next_page_url)
+    except Exception as e:
+        print(f"Error: {e}")
     
     return all_reviews
+
 
 def analyze_review(all_reviews):
     sia = SentimentIntensityAnalyzer()
@@ -138,7 +137,7 @@ def main():
                 new_url = extract_review_url(product_url)
                 all_reviews = scrape_reviews(new_url)
                 st.write(all_reviews)
-                
+
                 if all_reviews:
                     average_sentiment, positive_reviews, negative_reviews, average_percent = analyze_review(all_reviews)
                     
