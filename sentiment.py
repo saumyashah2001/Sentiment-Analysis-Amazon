@@ -1,6 +1,7 @@
 import os
 import streamlit as st
 from langchain.chains import create_tagging_chain
+from bs4 import BeautifulSoup
 from langchain_openai import ChatOpenAI
 from nltk.sentiment import SentimentIntensityAnalyzer
 from langchain_community.document_loaders import WebBaseLoader
