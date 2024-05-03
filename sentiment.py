@@ -205,5 +205,5 @@ def main():
                 st.warning("Please enter a review.")
 
 if __name__ == "__main__":
-    main()
+    main() 
 
