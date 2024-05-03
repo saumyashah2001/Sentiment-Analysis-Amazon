@@ -2,3 +2,5 @@ nltk
 streamlit 
 langchain
 python-dotenv
+langchain-openai
+langchain-community
