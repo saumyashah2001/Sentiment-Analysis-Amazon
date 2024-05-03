@@ -11,6 +11,7 @@ import re
 import nltk
 nltk.download('vader_lexicon')
 
+
 load_dotenv()
 
 all_reviews=[]
@@ -120,7 +121,7 @@ def analyze_sentiment(review):
         return sentiment, stars
 
     except Exception as e:
-        st.error("An error occurred during sentiment analysis:", e)
+        st.error("An error occurred during sentiment analysis: " + str(e))
         return None, None
 def main():
     st.set_page_config(layout='wide')
